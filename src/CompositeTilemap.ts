@@ -82,7 +82,7 @@ export class CompositeTilemap extends Container
     public tileAnim: [number, number] = null;
 
     /** The last modified tilemap. */
-    protected lastModifiedTilemap: Tilemap = null;
+    public lastModifiedTilemap: Tilemap = null;
 
     private modificationMarker = 0;
     private shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
@@ -239,12 +239,14 @@ export class CompositeTilemap extends Container
             animDivisor?: number,
             alpha?: number,
         } = {}
-    ): this
+    ): number
     {
         let tilemap: Tilemap = null;
         const children = this.children;
 
         this.lastModifiedTilemap = null;
+
+        let result = -1;
 
         if (typeof tileTexture === 'number')
         {
@@ -258,7 +260,7 @@ export class CompositeTilemap extends Container
                 tilemap = children[0] as Tilemap;
 
                 // Silently fail if the tilemap doesn't exist
-                if (!tilemap) return this;
+                if (!tilemap) return -1;
 
                 tileIndex = 0;
             }
@@ -267,7 +269,7 @@ export class CompositeTilemap extends Container
                 tileIndex = tileTexture % this.texturesPerTilemap;
             }
 
-            tilemap.tile(
+            result = tilemap.tile(
                 tileIndex,
                 x,
                 y,
@@ -330,7 +332,7 @@ export class CompositeTilemap extends Container
                 }
             }
 
-            tilemap.tile(
+            result = tilemap.tile(
                 tileTexture,
                 x,
                 y,
@@ -340,7 +342,7 @@ export class CompositeTilemap extends Container
 
         this.lastModifiedTilemap = tilemap;
 
-        return this;
+        return result;
     }
 
     renderCanvas = (renderer: CanvasRenderer): void =>
@@ -457,7 +459,7 @@ export class CompositeTilemap extends Container
         animHeight?: number,
         animDivisor?: number,
         alpha?: number
-    ): this
+    ): number
     {
         return this.tile(
             texture,

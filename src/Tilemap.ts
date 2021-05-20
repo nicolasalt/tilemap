@@ -199,7 +199,7 @@ export class Tilemap extends Container
             animDivisor?: number,
             alpha?: number,
         } = {}
-    ): this
+    ): number
     {
         let baseTexture: BaseTexture;
         let textureIndex = -1;
@@ -248,7 +248,7 @@ export class Tilemap extends Container
         {
             console.error('The tile texture was not found in the tilemap tileset.');
 
-            return this;
+            return -1;
         }
 
         const {
@@ -286,7 +286,7 @@ export class Tilemap extends Container
 
         this.tilemapBounds.addFramePad(x, y, x + tileWidth, y + tileHeight, 0, 0);
 
-        return this;
+        return this.pointsBuf.length;
     }
 
     /** Changes the rotation of the last tile. */
@@ -329,6 +329,13 @@ export class Tilemap extends Container
         const pb = this.pointsBuf;
 
         pb[pb.length - (POINT_STRUCT_SIZE - POINT_STRUCT.ALPHA)] = alpha;
+    }
+
+    tileAlphaForIndex(index: number, alpha: number): void
+    {
+        const pb = this.pointsBuf;
+
+        pb[index - (POINT_STRUCT_SIZE - POINT_STRUCT.ALPHA)] = alpha;
     }
 
     renderCanvas = (renderer: CanvasRenderer): void =>
@@ -740,7 +747,7 @@ export class Tilemap extends Container
         animCountY = 1024,
         animDivisor = 1,
         alpha = 1,
-    ): this
+    ): number
     {
         return this.tile(
             textureIndex,
